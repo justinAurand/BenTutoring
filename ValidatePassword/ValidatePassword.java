@@ -6,7 +6,7 @@ public class ValidatePassword {
         String password = "";
         boolean valid = false;
 
-        while(!valid) {
+        while (!valid) {
             System.out.println("Enter your password:");
             password = scan.nextLine();
 
@@ -25,6 +25,23 @@ public class ValidatePassword {
 
             valid = true;
         }
+
+        String confirmPassword = "";
+        boolean equal = false;
+
+        while (!equal) {
+            System.out.println("Confirm password:");
+            confirmPassword = scan.nextLine();
+
+            if (!confirmPassword.equals(password)) {
+                System.out.println("Passwords do not match.");
+                continue;
+            }
+
+            equal = true;
+        }
+
+        System.out.println("Confirmed.");
     }
 
     private static boolean IsLongEnough(String pw) {
