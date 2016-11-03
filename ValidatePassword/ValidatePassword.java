@@ -103,16 +103,11 @@ public class ValidatePassword {
 
     private static boolean HasThreeConsecutiveCharacters(String pw) {
         char[] pass = pw.toCharArray();
-        for (int i = 0; i < pass.length; i++)
-        {
-            if (i + 2 >= pass.length)
-                break;
-
+        for (int i = 0; i + 2 < pass.length; i++)
             if (pass[i] == pass[i+1] && pass[i+1] == pass[i+2]) {
                 System.out.println("Password cannot contain three consecutive characters.");
                 return true;
             }
-        }
         return false;
     }
 }
