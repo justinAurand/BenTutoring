@@ -29,51 +29,51 @@ public class Monopoly {
             takeTurn(player, squares);
     }
 
-    private static void displayStatus(Player player, BoardSquare[] squares, int diceRoll, int rentPaid) {
+    private static void displayStatus(Player player, BoardSquare[] squares, int roll, int rent) {
         int location = player.getLocation();
         BoardSquare square = squares[location];
         String squareName = square.getName();
 
         System.out.println(player.toString());
-        System.out.println("Roll: " + Integer.toString(diceRoll));
+        System.out.println("Roll: " + Integer.toString(roll));
         System.out.println("Current square: " + squareName);
-        if (rentPaid > 0)
-            System.out.println("Rent paid: " + Integer.toString(rentPaid));
+        if (rent > 0)
+            System.out.println("Rent paid: " + Integer.toString(rent));
     }
 
     private static void loadSquares(BoardSquare[] squares) throws Exception {
         String name, type, color;
         int price, rent;
 
-        java.io.File squaresFile = new java.io.File("squares.txt");
-        Scanner squaresScanner = new Scanner(squaresFile);
+        java.io.File file = new java.io.File("squares.txt");
+        Scanner scan = new Scanner(file);
         for (int i=0; i<NUMBER_OF_SQUARES; i++) {
-            name  = squaresScanner.nextLine();
-            type  = squaresScanner.nextLine();
-            price = Integer.parseInt(squaresScanner.nextLine());
-            rent  = Integer.parseInt(squaresScanner.nextLine());
-            color = squaresScanner.nextLine();
+            name  = scan.nextLine();
+            type  = scan.nextLine();
+            price = Integer.parseInt(scan.nextLine());
+            rent  = Integer.parseInt(scan.nextLine());
+            color = scan.nextLine();
             squares[i] = new BoardSquare(name, type, price, rent, color);
         }
-        squaresScanner.close();
+        scan.close();
     }
 
     private static int movePlayer(Player player) {
         int currentLocation = player.getLocation();
-        int diceRoll = rollDice(2);
-        int newLocation = currentLocation + diceRoll;
+        int roll = rollDice(2);
+        int newLocation = currentLocation + roll;
 
         if (newLocation > (NUMBER_OF_SQUARES-1))
             newLocation = newLocation - NUMBER_OF_SQUARES;
 
         player.setLocation(newLocation);
-        return diceRoll;
+        return roll;
     }
 
     private static int payRent(Player player, BoardSquare[] squares) {
-        int currentLocation = player.getLocation();
-        BoardSquare currentSquare = squares[currentLocation];
-        int rent = currentSquare.getRent();
+        int location = player.getLocation();
+        BoardSquare square = squares[location];
+        int rent = square.getRent();
 
         int currentBalance = player.getBalance();
         int newBalance = currentBalance - rent;
@@ -105,9 +105,9 @@ public class Monopoly {
     }
 
     private static void takeTurn(Player player, BoardSquare[] squares) {
-        int diceRoll = movePlayer(player);
-        int rentPaid = payRent(player, squares);
-        displayStatus(player, squares, diceRoll, rentPaid);
+        int roll = movePlayer(player);
+        int rent = payRent(player, squares);
+        displayStatus(player, squares, roll, rent);
         requireInput();
     }
 }
