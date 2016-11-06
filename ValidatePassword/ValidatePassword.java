@@ -10,17 +10,17 @@ public class ValidatePassword {
             System.out.println("Enter your password:");
             password = scan.nextLine();
 
-            if (!IsLongEnough(password))
+            if (!isLongEnough(password))
                 continue;
-            if (HasASpace(password))
+            if (hasASpace(password))
                 continue;
-            if (!HasLetterNumberAndSymbol(password))
+            if (!hasLetterNumberAndSymbol(password))
                 continue;
-            if (StartsWithExclamation(password))
+            if (startsWithExclamation(password))
                 continue;
-            if (EndsWithHyphen(password))
+            if (endsWithHyphen(password))
                 continue;
-            if (HasThreeConsecutiveCharacters(password))
+            if (hasThreeConsecutiveCharacters(password))
                 continue;
 
             valid = true;
@@ -33,10 +33,8 @@ public class ValidatePassword {
             System.out.println("Confirm password:");
             confirmPassword = scan.nextLine();
 
-            if (!confirmPassword.equals(password)) {
-                System.out.println("Passwords do not match.");
+            if (!match(password, confirmPassword))
                 continue;
-            }
 
             equal = true;
         }
@@ -44,7 +42,7 @@ public class ValidatePassword {
         System.out.println("Confirmed.");
     }
 
-    private static boolean IsLongEnough(String pw) {
+    private static boolean isLongEnough(String pw) {
         if (pw.length() < 8) {
             System.out.println("Password must be at least 8 characters in length.");
             return false;
@@ -52,7 +50,7 @@ public class ValidatePassword {
         return true;
     }
 
-    private static boolean HasASpace(String pw) {
+    private static boolean hasASpace(String pw) {
         if (pw.contains(" ")) {
             System.out.println("Password cannot contain spaces.");
             return true;
@@ -60,14 +58,14 @@ public class ValidatePassword {
         return false;
     }
 
-    private static boolean HasLetterNumberAndSymbol(String pw) {
+    private static boolean hasLetterNumberAndSymbol(String pw) {
         char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
         char[] numbers = "0123456789".toCharArray();
         char[] symbols = "~!@#$%^&*()_+{}|<>?".toCharArray();
 
-        boolean hasLetter = HasIntersetion(pw, letters);
-        boolean hasNumber = HasIntersetion(pw, numbers);
-        boolean hasSymbol = HasIntersetion(pw, symbols);
+        boolean hasLetter = hasIntersetion(pw, letters);
+        boolean hasNumber = hasIntersetion(pw, numbers);
+        boolean hasSymbol = hasIntersetion(pw, symbols);
 
         if (!hasLetter || !hasNumber || !hasSymbol) {
             System.out.println("Password must contain a letter, number, and symbol.");
@@ -76,7 +74,7 @@ public class ValidatePassword {
         return true;
     }
 
-    private static boolean HasIntersetion(String pw, char[] values) {
+    private static boolean hasIntersetion(String pw, char[] values) {
         for (int i = 0; i < values.length; i++) {
             String value = Character.toString(values[i]);
             if (pw.contains(value))
@@ -85,7 +83,7 @@ public class ValidatePassword {
         return false;
     }
 
-    private static boolean StartsWithExclamation(String pw) {
+    private static boolean startsWithExclamation(String pw) {
         if (pw.startsWith("!")) {
             System.out.println("Password cannot start with an exclamation point.");
             return true;
@@ -93,7 +91,7 @@ public class ValidatePassword {
         return false;
     }
 
-    private static boolean EndsWithHyphen(String pw) {
+    private static boolean endsWithHyphen(String pw) {
         if (pw.endsWith("-")) {
             System.out.println("Password cannot end with a hyphen.");
             return true;
@@ -101,15 +99,21 @@ public class ValidatePassword {
         return false;
     }
 
-    private static boolean HasThreeConsecutiveCharacters(String pw) {
+    private static boolean hasThreeConsecutiveCharacters(String pw) {
         char[] pass = pw.toCharArray();
         for (int i = 0; i + 2 < pass.length; i++)
-        {
             if (pass[i] == pass[i+1] && pass[i+1] == pass[i+2]) {
                 System.out.println("Password cannot contain three consecutive characters.");
                 return true;
             }
-        }
         return false;
+    }
+
+    private static boolean match(String pw, String cpw) {
+        if (!cpw.equals(pw)) {
+            System.out.println("Passwords do not match.");
+            return false;
+        }
+        return true;
     }
 }
