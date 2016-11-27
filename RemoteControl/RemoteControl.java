@@ -3,8 +3,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class RemoteControl {
-    public static void main(String[] args) {
+public class RemoteControl implements ActionListener {
+    public RemoteControl() {
         JFrame remote = getRemote();
         remote.add(getPowerAndInputPanel(), BorderLayout.NORTH);
         remote.add(getChannelAndVolumePanel(), BorderLayout.CENTER);
@@ -12,13 +12,18 @@ public class RemoteControl {
         remote.setVisible(true);
     }
 
-    private static JButton getButton(String image) {
-        ImageIcon icon = new ImageIcon(image);
-        return new JButton(icon);
+    public void actionPerformed(ActionEvent e) {
+        JButton source = (JButton)e.getSource();
+        printButtonIdentity(source);
     }
 
-    private static JButton getButton(String text, Font font, Color color) {
+    public static void main(String[] args) {
+        RemoteControl remote = new RemoteControl();
+    }
+
+    private JButton getButton(String text, Font font, Color color) {
         JButton button = new JButton();
+        button.addActionListener(this);
         if (text != null && text.length() > 0)
             button.setText(text);
         if (font != null)
@@ -28,31 +33,39 @@ public class RemoteControl {
         return button;
     }
 
-    private static JPanel getChannelAndVolumePanel() {
+    private JPanel getChannelAndVolumePanel() {
         JPanel panel = new JPanel(new GridLayout (5,3));
         for (int i=1; i<10; i++)
-            panel.add(new JButton(Integer.toString(i)));
-        panel.add(new JButton("Ch. -"));
-        panel.add(new JButton("0"));
-        panel.add(new JButton("Ch. +"));
-        panel.add(new JButton("Vol. +"));
-        panel.add(new JButton("Mute"));
-        panel.add(new JButton("Vol. -"));
+            panel.add(getButton(Integer.toString(i), null, null));
+        panel.add(getButton("Ch. -", null, null));
+        panel.add(getButton("0", null, null));
+        panel.add(getButton("Ch. +", null, null));
+        panel.add(getButton("Vol. +", null, null));
+        panel.add(getButton("Mute", null, null));
+        panel.add(getButton("Vol. -", null, null));
         return panel;
     }
 
-    private static JPanel getDirectionPanel() {
+    private JPanel getDirectionPanel() {
         JPanel panel = new JPanel(new GridLayout (2,3));
-        panel.add(getButton("play.png"));
-        panel.add(getButton("pause.png"));
-        panel.add(getButton("stop.png"));
-        panel.add(getButton("rewind.png"));
+        panel.add(getImageButton("play.png"));
+        panel.add(getImageButton("pause.png"));
+        panel.add(getImageButton("stop.png"));
+        panel.add(getImageButton("rewind.png"));
         panel.add(new JButton());
-        panel.add(getButton("fast-forward.png"));
+        panel.add(getImageButton("fast-forward.png"));
         return panel;
     }
 
-    private static JPanel getPowerAndInputPanel() {
+    private JButton getImageButton(String image) {
+        ImageIcon icon = new ImageIcon(image);
+        JButton button = new JButton(icon);
+        button.setName(image.substring(0, image.lastIndexOf('.')));
+        button.addActionListener(this);
+        return button;
+    }
+
+    private JPanel getPowerAndInputPanel() {
         Font arialBold = new Font("Arial", Font.BOLD, 24);
         JPanel panel = new JPanel(new GridLayout (3,2));
         panel.add(getButton("Off", arialBold, Color.red));
@@ -64,7 +77,7 @@ public class RemoteControl {
         return panel;
     }
 
-    private static JFrame getRemote() {
+    private JFrame getRemote() {
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setTitle("Universal Remote");
@@ -72,5 +85,21 @@ public class RemoteControl {
         frame.setLocation(200, 100);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         return frame;
+    }
+
+    private void printButtonIdentity(JButton button) {
+        String text = button.getText();
+        if (text != null && text.length() > 0) {
+            System.out.println(text);
+            return;
+        }
+
+        String name = button.getName();
+        if (name != null && name.length() > 0) {
+            System.out.println(name);
+            return;
+        }
+
+        System.out.println("Undefined");
     }
 }
