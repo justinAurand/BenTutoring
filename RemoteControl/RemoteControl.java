@@ -14,11 +14,23 @@ public class RemoteControl implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         JButton button = (JButton)e.getSource();
-        printButtonIdentity(button);
+        System.out.println(getButtonIdentity(button));
     }
 
     public static void main(String[] args) {
         RemoteControl remote = new RemoteControl();
+    }
+
+    private String getButtonIdentity(JButton button) {
+        String text = button.getText();
+        if (text != null && text.length() > 0)
+            return text;
+
+        String name = button.getName();
+        if (name != null && name.length() > 0)
+            return name;
+
+        return "undefined";
     }
 
     private JButton getButtonWithListener(String text, Font font, Color color) {
@@ -35,21 +47,27 @@ public class RemoteControl implements ActionListener {
 
     private JPanel getChannelAndVolumePanel() {
         JPanel panel = new JPanel(new GridLayout (5,3));
-        VolumeListener listener = new VolumeListener();
 
+        IncrementListener volumeListener = new IncrementListener(false, 15, 50, 0);
         JButton volumeUpButton = new JButton("Vol. +");
         JButton volumeDownButton = new JButton("Vol. -");
-        volumeUpButton.addActionListener(listener);
-        volumeDownButton.addActionListener(listener);
+        volumeUpButton.addActionListener(volumeListener);
+        volumeDownButton.addActionListener(volumeListener);
+
+        IncrementListener channelListener = new IncrementListener(true, 2, 999, 2);
+        JButton channelUpButton = new JButton("Ch. +");
+        JButton channelDownButton = new JButton("Ch. -");
+        channelUpButton.addActionListener(channelListener);
+        channelDownButton.addActionListener(channelListener);
 
         for (int i=1; i<10; i++)
             panel.add(getButtonWithListener(Integer.toString(i), null, null));
-        panel.add(getButtonWithListener("Ch. -", null, null));
-        panel.add(getButtonWithListener("0", null, null));
-        panel.add(getButtonWithListener("Ch. +", null, null));
         panel.add(volumeUpButton);
-        panel.add(getButtonWithListener("Mute", null, null));
+        panel.add(getButtonWithListener("0", null, null));
+        panel.add(channelUpButton);
         panel.add(volumeDownButton);
+        panel.add(getButtonWithListener("Mute", null, null));
+        panel.add(channelDownButton);
 
         return panel;
     }
@@ -100,40 +118,46 @@ public class RemoteControl implements ActionListener {
         return frame;
     }
 
-    private void printButtonIdentity(JButton button) {
-        String text = button.getText();
-        if (text != null && text.length() > 0) {
-            System.out.println(text);
-            return;
+    private class IncrementListener implements ActionListener {
+        private boolean cycle;
+        private int level;
+        private int max;
+        private int min;
+
+        private IncrementListener() {
+            cycle = false;
+            level = 0;
+            max = Integer.MAX_VALUE;
+            min = Integer.MIN_VALUE;
         }
-
-        String name = button.getName();
-        if (name != null && name.length() > 0) {
-            System.out.println(name);
-            return;
+        private IncrementListener(boolean cycle, int level, int max, int min) {
+            this.cycle = cycle;
+            this.level = level;
+            this.max = max;
+            this.min = min;
         }
-
-        System.out.println("Undefined");
-    }
-
-    private class VolumeListener implements ActionListener {
-        private int volume;
-
-        private VolumeListener() {
-            volume = 0;
-        }
-
-        public int getVolume() { return volume; }
 
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton)e.getSource();
             String text = button.getText();
-            if (text.contains("+"))
-                volume++;
-            if (text.contains("-"))
-                volume--;
+            level = getNextLevel(cycle, level, max, min, text);
 
-            System.out.println("Volume: " + Integer.toString(volume));
+            System.out.println(
+                getButtonIdentity(button) + " | "
+                + "level: " + Integer.toString(level)
+                );
+        }
+
+        private int getNextLevel(boolean cycle, int level, int max, int min, String text) {
+            if (text.contains("+") && level == max && cycle)
+                return min;
+            if (text.contains("-") && level == min && cycle)
+                return max;
+            if (text.contains("+") && level < max)
+                return ++level;
+            if (text.contains("-") && level > min)
+                return --level;
+            return level;
         }
     }
 }
