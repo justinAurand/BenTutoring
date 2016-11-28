@@ -140,7 +140,7 @@ public class RemoteControl implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             JButton button = (JButton)e.getSource();
             String text = button.getText();
-            level = getNextLevel(cycle, level, max, min, text);
+            level = getNextLevel(text);
 
             System.out.println(
                 getButtonIdentity(button) + " | "
@@ -148,7 +148,7 @@ public class RemoteControl implements ActionListener {
                 );
         }
 
-        private int getNextLevel(boolean cycle, int level, int max, int min, String text) {
+        private int getNextLevel(String text) {
             if (text.contains("+") && level == max && cycle)
                 return min;
             if (text.contains("-") && level == min && cycle)
